@@ -1,3 +1,4 @@
+
 // DOM Elements
 const plainTextInput = document.getElementById('plainText');
 const addLayerBtn = document.getElementById('addLayerBtn');
@@ -12,7 +13,7 @@ const layerTemplate = document.getElementById('layerTemplate');
 
 let layerCount = 0;
 
-// Add new layer
+// Add a new encryption layer to the UI
 function addLayer() {
     const layer = layerTemplate.content.cloneNode(true);
     const layerItem = layer.querySelector('.layer-item');
@@ -25,7 +26,7 @@ function addLayer() {
     layerNumber.textContent = `Layer ${layerCount}`;
     layerItem.dataset.layerId = layerCount;
 
-    // Show/hide key input based on algorithm selection
+    // Toggle key input visibility based on selected algorithm
     algorithmSelect.addEventListener('change', () => {
         const selectedAlgorithm = algorithmSelect.value;
         const keyHelp = keyGroup.querySelector('.key-help');
@@ -67,7 +68,7 @@ function addLayer() {
         }
     });
 
-    // Remove layer
+    // Remove a layer from the UI
     removeLayerBtn.addEventListener('click', () => {
         layerItem.remove();
         layerCount--;
@@ -79,7 +80,7 @@ function addLayer() {
     updateRemoveLayerButton();
 }
 
-// Update layer numbers
+// Update the numbering of layers in the UI
 function updateLayerNumbers() {
     const layers = layersList.querySelectorAll('.layer-item');
     layers.forEach((layer, index) => {
@@ -88,19 +89,19 @@ function updateLayerNumbers() {
     });
 }
 
-// Update remove layer button state
+// Enable or disable the remove layer button based on layer count
 function updateRemoveLayerButton() {
     removeLayerBtn.disabled = layerCount <= 1;
 }
 
-// Clear all layers
+// Clear all layers from a list
 function clearLayers() {
     layersList.innerHTML = '';
     layerCount = 0;
     updateRemoveLayerButton();
 }
 
-// Process text through all layers
+// Process text through all encryption/decryption layers
 function processText(text, encrypt = true) {
     const layers = layersList.querySelectorAll('.layer-item');
     let result = text;
@@ -144,8 +145,10 @@ function processText(text, encrypt = true) {
     return { result, steps: steps.join('\n\n') };
 }
 
-// Event Listeners
+// Event listener to add a new layer
 addLayerBtn.addEventListener('click', addLayer);
+
+// Event listener to remove the last layer
 removeLayerBtn.addEventListener('click', () => {
     const lastLayer = layersList.lastElementChild;
     if (lastLayer) {
@@ -156,12 +159,14 @@ removeLayerBtn.addEventListener('click', () => {
     }
 });
 
+// Event listener to clear all input and layers
 clearBtn.addEventListener('click', () => {
     plainTextInput.value = '';
     resultDiv.textContent = '';
     clearLayers();
 });
 
+// Event listener to encrypt text
 encryptBtn.addEventListener('click', () => {
     const text = plainTextInput.value;
     if (!text || layerCount === 0) {
@@ -177,6 +182,7 @@ encryptBtn.addEventListener('click', () => {
     }, 200);
 });
 
+// Event listener to decrypt text
 decryptBtn.addEventListener('click', () => {
     const text = plainTextInput.value;
     if (!text || layerCount === 0) {
@@ -192,7 +198,7 @@ decryptBtn.addEventListener('click', () => {
     }, 200);
 });
 
-// Copy to clipboard functionality
+// Event listener to copy result to clipboard
 copyBtn.addEventListener('click', () => {
     const text = resultDiv.textContent;
     if (text) {
@@ -210,10 +216,10 @@ copyBtn.addEventListener('click', () => {
     }
 });
 
-// Add first layer on load
+// Initialize with one layer
 addLayer();
 
-// Caesar Cipher
+// Implement Caesar Cipher
 function caesarCipher(text, key, encrypt = true) {
     return text.split('').map(char => {
         if (char.match(/[a-z]/i)) {
@@ -226,7 +232,7 @@ function caesarCipher(text, key, encrypt = true) {
     }).join('');
 }
 
-// Monoalphabetic Cipher
+// Implement Monoalphabetic Cipher
 function monoalphabeticCipher(text, key, encrypt = true) {
     const alphabet = 'abcdefghijklmnopqrstuvwxyz';
     const keyMap = {};
@@ -246,7 +252,7 @@ function monoalphabeticCipher(text, key, encrypt = true) {
     }).join('');
 }
 
-// Vigenere Cipher
+// Implement Vigenere Cipher
 function vigenereCipher(text, key, encrypt = true) {
     const alphabet = 'abcdefghijklmnopqrstuvwxyz';
     let result = '';
@@ -275,7 +281,7 @@ function vigenereCipher(text, key, encrypt = true) {
     return result;
 }
 
-// Rail Fence Cipher
+// Implement Rail Fence Cipher
 function railFenceCipher(text, key, encrypt = true) {
     const rails = parseInt(key);
     if (rails <= 1) return text;
@@ -300,7 +306,7 @@ function railFenceCipher(text, key, encrypt = true) {
         let direction = 1;
         let index = 0;
 
-        // Mark positions
+        // Mark positions in matrix
         for (let i = 0; i < text.length; i++) {
             matrix[rail][i] = '*';
             rail += direction;
@@ -309,7 +315,7 @@ function railFenceCipher(text, key, encrypt = true) {
             }
         }
 
-        // Fill characters
+        // Fill matrix with characters
         for (let i = 0; i < rails; i++) {
             for (let j = 0; j < text.length; j++) {
                 if (matrix[i][j] === '*') {
@@ -318,7 +324,7 @@ function railFenceCipher(text, key, encrypt = true) {
             }
         }
 
-        // Read result
+        // Read result from matrix
         let result = '';
         rail = 0;
         direction = 1;
@@ -333,13 +339,13 @@ function railFenceCipher(text, key, encrypt = true) {
     }
 }
 
-// Row Column Transposition
+// Implement Row-Column Transposition Cipher
 function rowColumnTransposition(text, key, encrypt = true) {
     const keyLength = key.length;
     const textLength = text.length;
     const rows = Math.ceil(textLength / keyLength);
     
-    const cleanText = text.replace(/[^a-zA-Z]/g, ''); // optional: remove non-letter chars
+    const cleanText = text.replace(/[^a-zA-Z]/g, '');
 
     if (encrypt) {
         const matrix = Array.from({ length: rows }, () => Array(keyLength).fill(''));
@@ -351,18 +357,18 @@ function rowColumnTransposition(text, key, encrypt = true) {
                 if (index < cleanText.length) {
                     matrix[i][j] = cleanText[index++];
                 } else {
-                    matrix[i][j] = ''; // could use 'X' for padding if needed
+                    matrix[i][j] = '';
                 }
             }
         }
 
-        // Determine key order
+        // Determine column order based on key
         const keyOrder = key.split('')
             .map((char, i) => ({ char, index: i }))
             .sort((a, b) => a.char.localeCompare(b.char))
             .map(item => item.index);
 
-        // Read column-wise based on key order
+        // Read columns based on key order
         let result = '';
         for (let col of keyOrder) {
             for (let row = 0; row < rows; row++) {
@@ -376,7 +382,7 @@ function rowColumnTransposition(text, key, encrypt = true) {
     } else {
         const matrix = Array.from({ length: rows }, () => Array(keyLength).fill(''));
         
-        // Determine key order
+        // Determine column order based on key
         const keyOrder = key.split('')
             .map((char, i) => ({ char, index: i }))
             .sort((a, b) => a.char.localeCompare(b.char))
@@ -388,14 +394,13 @@ function rowColumnTransposition(text, key, encrypt = true) {
         // Fill matrix column-wise by key order
         for (let colIndex of keyOrder) {
             for (let row = 0; row < rows; row++) {
-                // Avoid overflow beyond original message length
                 if ((row * keyLength + colIndex) < totalFilled && index < cleanText.length) {
                     matrix[row][colIndex] = cleanText[index++];
                 }
             }
         }
 
-        // Read row-wise
+        // Read matrix row-wise
         let result = '';
         for (let i = 0; i < rows; i++) {
             for (let j = 0; j < keyLength; j++) {
@@ -409,8 +414,8 @@ function rowColumnTransposition(text, key, encrypt = true) {
     }
 }
 
-
-    function sdesCipher(text, key, encrypt = true) {
+// Implement Simplified DES Cipher
+function sdesCipher(text, key, encrypt = true) {
     const P10 = [3, 5, 2, 7, 4, 10, 1, 9, 8, 6];
     const P8 = [6, 3, 7, 4, 8, 5, 10, 9];
     const P4 = [2, 4, 3, 1];
@@ -430,18 +435,22 @@ function rowColumnTransposition(text, key, encrypt = true) {
         [2, 1, 0, 3]
     ];
 
+    // Permute bits according to a table
     function permute(bits, table) {
         return table.map(pos => bits[pos - 1]);
     }
 
+    // Perform a left shift on bits
     function leftShift(bits) {
         return bits.slice(1).concat(bits[0]);
     }
 
+    // Perform XOR operation on two bit arrays
     function xor(a, b) {
         return a.map((bit, i) => bit ^ b[i]);
     }
 
+    // Apply S-box transformation
     function sBox(bits, box) {
         const row = parseInt(`${bits[0]}${bits[3]}`, 2);
         const col = parseInt(`${bits[1]}${bits[2]}`, 2);
@@ -449,14 +458,17 @@ function rowColumnTransposition(text, key, encrypt = true) {
         return [(val >> 1) & 1, val & 1];
     }
 
+    // Convert binary string to bit array
     function binaryToBits(binary) {
         return binary.replace(/\s/g, '').split('').map(bit => parseInt(bit));
     }
 
+    // Convert bit array to binary string
     function bitsToBinary(bits) {
         return bits.join('');
     }
 
+    // Generate subkeys K1 and K2
     function generateKeys(key) {
         let keyBits = binaryToBits(key);
         let steps = [];
@@ -468,13 +480,13 @@ function rowColumnTransposition(text, key, encrypt = true) {
         let right = p10.slice(5);
         steps.push(`Split: L=${bitsToBinary(left)}, R=${bitsToBinary(right)}`);
 
-        // K1
+        // Generate K1
         left = leftShift(left);
         right = leftShift(right);
         let k1 = permute(left.concat(right), P8);
         steps.push(`K1: ${bitsToBinary(k1)}`);
 
-        // K2
+        // Generate K2
         left = leftShift(leftShift(left));
         right = leftShift(leftShift(right));
         let k2 = permute(left.concat(right), P8);
@@ -483,6 +495,7 @@ function rowColumnTransposition(text, key, encrypt = true) {
         return { k1, k2, steps };
     }
 
+    // Apply function fk
     function fk(L, R, subkey) {
         let ep = permute(R, EP);
         let xored = xor(ep, subkey);
@@ -494,6 +507,7 @@ function rowColumnTransposition(text, key, encrypt = true) {
         return result;
     }
 
+    // Process a single block of data
     function processBlock(block, k1, k2, encrypt) {
         let steps = [];
         let ip = permute(block, IP);
@@ -507,7 +521,7 @@ function rowColumnTransposition(text, key, encrypt = true) {
         let fk1 = fk(L, R, k1);
         steps.push(`After fk1: L=${bitsToBinary(fk1)}, R=${bitsToBinary(R)}`);
 
-        // Switch
+        // Switch L and R
         [L, R] = [R, fk1];
         steps.push(`After SW: L=${bitsToBinary(L)}, R=${bitsToBinary(R)}`);
 
@@ -530,10 +544,13 @@ function rowColumnTransposition(text, key, encrypt = true) {
         steps: ["Key Generation:"].concat(keySteps, ["\n" + (encrypt ? "Encryption" : "Decryption") + " Steps:"], steps).join('\n')
     };
 }
+
+// Implement Playfair Cipher
 function playfairCipher(text, key, encrypt = true) {
     const keySquare = generatePlayfairKeySquare(key);
     text = text.toLowerCase().replace(/[^a-z]/g, '').replace(/j/g, 'i');
 
+    // Split text into digraphs
     const digraphs = [];
     let i = 0;
     while (i < text.length) {
@@ -553,6 +570,7 @@ function playfairCipher(text, key, encrypt = true) {
         digraphs[digraphs.length - 1][1] = 'x';
     }
 
+    // Process each digraph
     let result = digraphs.map(([a, b]) => {
         const pos1 = findPositionInKeySquare(a, keySquare);
         const pos2 = findPositionInKeySquare(b, keySquare);
@@ -572,7 +590,7 @@ function playfairCipher(text, key, encrypt = true) {
         return res;
     }).join('');
 
-    // تنظيف الـ x فقط وقت فك التشفير
+    // Clean up padding 'x' characters during decryption
     if (!encrypt) {
         result = result.replace(/([a-z])x(?=[a-z])/g, (match, p1, offset, str) => {
             const nextChar = str[offset + 2];
@@ -585,6 +603,7 @@ function playfairCipher(text, key, encrypt = true) {
     return result;
 }
 
+// Generate the 5x5 key square for Playfair Cipher
 function generatePlayfairKeySquare(key) {
     const keySet = new Set();
     const keySquare = Array.from({ length: 5 }, () => Array(5).fill(''));
@@ -600,6 +619,7 @@ function generatePlayfairKeySquare(key) {
         }
     }
 
+    // Fill remaining square with alphabet
     for (let i = 0; i < 26; i++) {
         const char = String.fromCharCode(97 + i);
         if (char === 'j' || keySet.has(char)) continue;
@@ -611,6 +631,7 @@ function generatePlayfairKeySquare(key) {
     return keySquare;
 }
 
+// Find the position of a character in the Playfair key square
 function findPositionInKeySquare(char, keySquare) {
     for (let row = 0; row < 5; row++) {
         for (let col = 0; col < 5; col++) {
