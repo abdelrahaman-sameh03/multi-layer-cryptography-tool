@@ -39,19 +39,4 @@ This is a modern web-based encryption & decryption tool developed as a course pr
 5. **Click Encrypt or Decrypt**
 6. **View the result + DES binary steps (if selected)**
 
----
-
-## 📸 Preview
-
-![Preview Screenshot](insert_screenshot_here)
-
----
-
-## 🚀 Live Demo
-
-[Live Link Here] *(optional)*
-
----
-
-## 📂 Project Structure
 
