@@ -27,7 +27,9 @@ This is a web-based cryptography tool developed as part of an academic course pr
 ## 📂 Project Structure
 
 ├── index.html # Main HTML layout
+
 ├── styles.css # UI styling and animations
+
 ├── script.js # Cipher logic and interactivity
 
 
